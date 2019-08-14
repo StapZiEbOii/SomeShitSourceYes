@@ -19,9 +19,42 @@ void Menu::Render()
 	int w, h;
 	g_pEngine->GetScreenSize(w, h);
 
+	static int iWidth, iHeight;
+	g_pEngine->GetScreenSize(iWidth, iHeight);
+
+	Color menu_accent(255, 255, 255);
+
+
+
+	static bool Pressed = false;
+
+	if (!Pressed && GetAsyncKeyState(VK_INSERT))
+		Pressed = true;
+	else if (Pressed && !GetAsyncKeyState(VK_INSERT))
+	{
+		Pressed = false;
+		menuOpened = !menuOpened;
+	}
+
+	static Vector2D oldPos;
+	static Vector2D mousePos;
+
+	static int dragX = 0;
+	static int dragY = 0;
+	static int Width = 600;
+	static int Height = 580;
+
+	static int iScreenWidth, iScreenHeight;
+
+	static bool Dragging = false;
+	bool click = false;
+
+
 	time_t now = time(0);
 	char* dt = ctime(&now);
-
+	Color menu_onetap1(36, 36, 36, 100);
+	Color menu_onetap2(70, 74, 76, 255);
+	Color menu_onetap3(0, 0, 0, 255);
 	// Logo
 	if (Config.WaterMark)
 	{
@@ -59,7 +92,7 @@ void Menu::Render()
 		g_pSurface->DrawT(w - 326, 61, Color(255, 8, 127, 255), g::WatermarkDate, false, dt);
 
 	}
-	static bool Pressed = false;
+
 
 	if (!Pressed && GetAsyncKeyState(VK_INSERT))
 		Pressed = true;
@@ -69,18 +102,7 @@ void Menu::Render()
 		menuOpened = !menuOpened;
 	}
 
-	static Vector2D oldPos;
-	static Vector2D mousePos;
 
-	static int dragX = 0;
-	static int dragY = 0;
-	static int Width = 400;
-	static int Height = 340;
-
-	static int iScreenWidth, iScreenHeight;
-
-	static bool Dragging = false;
-	bool click = false;
 
 	if (menuOpened)
 	{
@@ -117,17 +139,16 @@ void Menu::Render()
 		if ((Pos.y + Height) > iScreenHeight)
 			Pos.y = iScreenHeight - Height;
 
-		g_pSurface->FilledRect(Pos.x - 8, Pos.y - 26, 421, 377, Color(0, 0, 0, 155));
-		g_pSurface->FilledRect(Pos.x - 10, Pos.y - 26, 421, 377, Color(0, 0, 0, 155));
-		g_pSurface->FilledRect(Pos.x, Pos.y, Width, Height - 4, Color(247, 20, 122, 255));
-		g_pSurface->OutlinedRect(Pos.x - 10, Pos.y - 26, 421, 377, Color(0, 0, 0, 255));
-		g_pSurface->FilledRect(Pos.x, Pos.y, Width, Height, Color(0, 0, 0, 255));
-		g_pSurface->DrawT(Pos.x - 0, Pos.y - 17, Color(255, 255, 255, 255), g::Tahoma, false, "CHAINSNATCH.IN Recode // ");
+		g_pSurface->FilledRect(Pos.x, Pos.y, 515, 625, menu_onetap1);  // menu
+		g_pSurface->OutlinedRect(Pos.x, Pos.y, 515, 625, menu_onetap2);  // menu
+		g_pSurface->FilledRect(Pos.x + 14, Pos.y + 34, 482, 570, menu_onetap3);  // menu
+		g_pSurface->OutlinedRect(Pos.x + 15, Pos.y + 35, 480, 568, menu_onetap2);  // menu
 
-		GroupTabPos[0] = Pos.x + 85;
-		GroupTabPos[1] = Pos.y + 25;
-		GroupTabPos[2] = Width - 91;
-		GroupTabPos[3] = Height - 50;
+
+		GroupTabPos[0] = Pos.x + 15;
+		GroupTabPos[1] = Pos.y + 48;
+		GroupTabPos[2] = Width - 4;
+		GroupTabPos[3] = Height - 96;
 
 		ControlsX = GroupTabPos[0];
 		GroupTabBottom = GroupTabPos[1] + GroupTabPos[3];
@@ -259,25 +280,30 @@ void Menu::Render()
 		SubTabSize = SubTabOffset;
 	}
 }
-
+Color button_light(239, 239, 239);
+Color button_idle_gray(191, 184, 191);
+Color button_dark(23, 23, 23);
 void Menu::Tab(std::string name)
 {
-	int TabArea[4] = { Pos.x, Pos.y + 35 + (TabOffset * 78), 80, 26 };
-
+	int height = 25;
+	int width = 75;
+	int TabArea[4] = { Pos.x + 25 + (TabOffset * (width + 2)), Pos.y + 3, width, height };
+	Color menu_accent(255, 255, 255);
+	Color Faggot(0, 0, 0);
 	if (GetAsyncKeyState(VK_LBUTTON) && g_pSurface->MouseInRegion(TabArea[0], TabArea[1], TabArea[2], TabArea[3]))
 		TabNum = TabOffset;
 
-	if (TabOffset == 0)
-		g_pSurface->FilledRect(TabArea[0], TabArea[1], 70, (TabSize * 25), Color(0, 0, 0, 255));
-
 	if (TabOffset == TabNum)
 	{
-		g_pSurface->DrawT(TabArea[0] + 17, TabArea[1] + 0, Color(255, 0, 76, 255), g::Tab, false, name.c_str());
-		g_pSurface->FilledRect(TabArea[0], TabArea[1], 0, TabArea[3],Color(0, 0, 0, 255));
-		g_pSurface->FilledRect(TabArea[0], TabArea[1], 0, TabArea[3],Color(0, 0, 0, 255));
+		g_pSurface->FilledRect(TabArea[0] + 10, TabArea[1] + 20, 58, 2, menu_accent);
+
+	}
+	else
+	{
+		g_pSurface->FilledRect(TabArea[0] + 10, TabArea[1] + 20, 58, 2, Faggot);
 	}
 
-	g_pSurface->DrawT(TabArea[0] + 17, TabArea[1] + 0, Color(255, 255, 255, 255), g::Tab, false, name.c_str());
+	g_pSurface->DrawT(TabArea[0] + (TabArea[2] / 2), TabArea[1] + 6, Color(255, 255, 255), g::Tahoma, true, name.c_str());
 
 	TabOffset += 1;
 	PreviousControl = -1;
@@ -288,17 +314,19 @@ void Menu::SubTab(std::string name)
 	if (TabOffset - 1 != TabNum || TabOffset == 0)
 		return;
 
-	RECT TextSize = g_pSurface->GetTextSizeRect(g::CourierNew, name.c_str());
+	RECT TextSize = g_pSurface->GetTextSizeRect(g::Tahoma, name.c_str());
 
 	static int TabSkip = 0;
 
+
+	Color menu_accentgrett(70, 70, 70);
+	Color menu_accentgrettt(100, 100, 100);
+
 	if (SubTabOffset == 0)
-		g_pSurface->FilledRect(GroupTabPos[0], GroupTabPos[1], GroupTabPos[2], 21, Color(0, 0, 0, 255));
+		g_pSurface->FilledRect(GroupTabPos[0] + 1, GroupTabPos[1] - 12, GroupTabPos[2] - 118, 21, menu_accentgrettt);
 
 	if (SubTabSize != 0 && TabSkip == TabNum)
 	{
-		if (TabNum >= SubTabSize)
-			TabNum = 0;
 
 		int TabLength = (GroupTabPos[2] / SubTabSize);
 
@@ -317,9 +345,16 @@ void Menu::SubTab(std::string name)
 				Offset = (GroupTabPos[2] - (TabLength * SubTabSize));
 
 			if (SubTabNum == SubTabOffset)
-				g_pSurface->FilledRect(GroupTabArea[0], GroupTabArea[1], GroupTabArea[2] + Offset, GroupTabArea[3],Color(0, 0, 0, 255));
+			{
+				g_pSurface->FilledRect(GroupTabArea[0] + 1, GroupTabArea[1] - 12, GroupTabArea[2] - 118, GroupTabArea[3], menu_accentgrettt);
 
-			g_pSurface->DrawT(TextPosition[0], TextPosition[1], Color(255, 255, 255, 255), g::CourierNew, false, name.c_str());
+			}
+			else
+			{
+				g_pSurface->FilledRect(GroupTabArea[0] + 1, GroupTabArea[1] - 12, GroupTabArea[2] - 118, GroupTabArea[3], menu_accentgrettt);
+			}
+
+			g_pSurface->DrawT(TextPosition[0] - 117, TextPosition[1] - 12, Color(205, 205, 205), g::Tahoma, false, name.c_str());
 		}
 	}
 
@@ -347,25 +382,27 @@ void Menu::CheckBox(std::string name, bool* item)
 
 	static bool pressed = false;
 
-	if (!GetAsyncKeyState(VK_LBUTTON) && g_pSurface->MouseInRegion(ControlsX + 0, OffsetY, 16, 16))
+	Color menu_accent(255, 255, 255);
+	Color menu_accentgret(70, 70, 70);
+
+	if (!GetAsyncKeyState(VK_LBUTTON) && g_pSurface->MouseInRegion(ControlsX + 5, OffsetY + 4, 8, 8))
 	{
 		if (pressed)
 			* item = !*item;
 		pressed = false;
 	}
 
-	if (GetAsyncKeyState(VK_LBUTTON) && g_pSurface->MouseInRegion(ControlsX + 0, OffsetY, 16, 16) && !pressed)
+	if (GetAsyncKeyState(VK_LBUTTON) && g_pSurface->MouseInRegion(ControlsX + 5, OffsetY + 4, 8, 8) && !pressed)
 		pressed = true;
-	
+
+	g_pSurface->FilledRect(ControlsX + 5, OffsetY + 4, 8, 8, Color(70, 70, 70));
+
 	if (*item == true)
-
-		g_pSurface->FilledRect(ControlsX + 0, OffsetY, 16, 16, Color(255, 0, 115, 255));
+		g_pSurface->FilledRect(ControlsX + 6, OffsetY + 5, 6, 6, menu_accent);
 	else
-		g_pSurface->FilledRect(ControlsX + 0, OffsetY, 16, 16, Color(26, 26, 26, 255));
+		g_pSurface->FilledRect(ControlsX + 6, OffsetY + 5, 6, 6, menu_accentgret);
 
-	g_pSurface->OutlinedRect(ControlsX + 0, OffsetY, 16, 16, Color(0, 0, 0, 255));
-
-	g_pSurface->DrawT(ControlsX + 26, OffsetY, Color(255, 255, 255, 255), g::CourierNew, false, name.c_str());
+	g_pSurface->DrawT(ControlsX + 28, OffsetY, Color(205, 205, 205), g::Tahoma, false, name.c_str());
 
 	OldOffsetY = OffsetY;
 	OffsetY += 26;
@@ -384,22 +421,25 @@ void Menu::Slider(int max, std::string name, int* item)
 		if (SubTabOffset - 1 != SubTabNum)
 			return;
 
+	Color menu_accent(255, 255, 255);
+	Color menu_accentgret(70, 70, 70);
+
+
 	float pixelValue = max / 114.f;
 
-	if (GetAsyncKeyState(VK_LBUTTON) && g_pSurface->MouseInRegion(ControlsX + 0, OffsetY + 5, 120, 8))
-		*item = (g_pSurface->GetMousePosition().x - (ControlsX + 2)) * pixelValue;
+	if (GetAsyncKeyState(VK_LBUTTON) && g_pSurface->MouseInRegion(ControlsX + 153, OffsetY + 5, 120, 8))
+		* item = (g_pSurface->GetMousePosition().x - (ControlsX + 155)) * pixelValue;
 
 	if (*item > max)
-		*item = max;
+		* item = max;
 	if (*item < 0)
-		*item = 0;
+		* item = 0;
 
-	g_pSurface->FilledRect(ControlsX + 0, OffsetY + 5, 120, 8, Color(0, 0, 0, 255));
-	g_pSurface->OutlinedRect(ControlsX + 0, OffsetY + 5, 120, 8, Color(245, 66, 123, 255));
-	g_pSurface->FilledRect(ControlsX + 0 + (*item / pixelValue), OffsetY + 5, 5, 8, Color(245, 66, 123, 255));
-	g_pSurface->DrawT(ControlsX + 51, OffsetY - 8, Color(255, 255, 255, 255), g::CourierNew, false, name.c_str());
+	g_pSurface->DrawT(ControlsX + 6, OffsetY, Color(205, 205, 205), g::Tahoma, false, name.c_str());
+	g_pSurface->FilledRect(ControlsX + 153, OffsetY + 5, 120, 6, menu_accentgret);
+	g_pSurface->FilledRect(ControlsX + 153, OffsetY + 5, (*item / pixelValue) + 3, 6, menu_accent);
 
-	g_pSurface->DrawT(ControlsX + 61, OffsetY + 1, Color(255, 255, 255, 255), g::Tahoma, true, std::to_string(*item).c_str());
+	g_pSurface->DrawT(ControlsX + 153 + (*item / pixelValue) + 3, OffsetY - 12, Color(205, 205, 205), g::Tahoma, true, std::to_string(*item).c_str());
 
 	OldOffsetY = OffsetY;
 	OffsetY += 26;
@@ -424,7 +464,8 @@ void Menu::ComboBox(std::string name, std::vector< std::string > itemname, int* 
 	static bool clickRest;
 	static bool rest;
 	static std::string nameSelected;
-
+	Color menu_accentgrett(70, 70, 70);
+	Color menu_accentgrettt(205, 205, 205);
 	if (GetAsyncKeyState(VK_LBUTTON) && g_pSurface->MouseInRegion(ControlsX + 153, OffsetY, 140, 16) && !clickRest)
 	{
 		nameSelected = name;
@@ -447,29 +488,35 @@ void Menu::ComboBox(std::string name, std::vector< std::string > itemname, int* 
 	if (nameSelected == name)
 		open = selectedOpened;
 
-	g_pSurface->DrawT(ControlsX + 6, OffsetY, Color(255, 255, 255, 255), g::CourierNew, false, name.c_str());
-	g_pSurface->FilledRect(ControlsX + 153, OffsetY, 140, 16,Color(0, 0, 0, 255));
-	g_pSurface->OutlinedRect(ControlsX + 153, OffsetY, 140, 16, Color(255, 0, 76, 255));
+	g_pSurface->DrawT(ControlsX + 6, OffsetY, Color(205, 205, 205), g::Tahoma, false, name.c_str());
+	g_pSurface->FilledRect(ControlsX + 153, OffsetY, 140, 16, menu_accentgrett);
+	g_pSurface->FilledRect(ControlsX + 286, OffsetY + 9, 5, 1, menu_accentgrettt);
+	g_pSurface->FilledRect(ControlsX + 287, OffsetY + 10, 3, 1, menu_accentgrettt);
+	g_pSurface->FilledRect(ControlsX + 288, OffsetY + 11, 1, 1, menu_accentgrettt);
+
+
 
 	if (open)
 	{
-		g_pSurface->FilledRect(ControlsX + 153, OffsetY, 140, 17 + (itemname.size() * 16),Color(0, 0, 0, 255));
-		g_pSurface->OutlinedRect(ControlsX + 153, OffsetY, 140, 17 + (itemname.size() * 16), Color(245, 66, 123, 255));
+		g_pSurface->FilledRect(ControlsX + 153, OffsetY, 140, 17 + (itemname.size() * 16), menu_accentgrett);
+		g_pSurface->FilledRect(ControlsX + 153, OffsetY, 140, 16, menu_accentgrett);
+		g_pSurface->FilledRect(ControlsX + 286, OffsetY + 9, 5, 1, menu_accentgrettt);
+		g_pSurface->FilledRect(ControlsX + 287, OffsetY + 10, 3, 1, menu_accentgrettt);
+		g_pSurface->FilledRect(ControlsX + 288, OffsetY + 11, 1, 1, menu_accentgrettt);
 
 		for (int i = 0; i < itemname.size(); i++)
 		{
 			if (GetAsyncKeyState(VK_LBUTTON) && g_pSurface->MouseInRegion(ControlsX + 153, OffsetY + 16 + i * 16, 140, 16))
-				*item = i;
+				* item = i;
 
 			if (*item == i)
-				g_pSurface->FilledRect(ControlsX + 154, OffsetY + 16 + (i * 16), 138, 16,Color(0, 0, 0, 255));
-			g_pSurface->OutlinedRect(ControlsX + 154, OffsetY + 16 + (i * 16), 138, 16, Color(245, 66, 123, 255));
+				g_pSurface->FilledRect(ControlsX + 154, OffsetY + 16 + (i * 16), 150, 20, menu_accentgrett);
 
-			g_pSurface->DrawT(ControlsX + 159, OffsetY + 16 + (i * 16), Color(255, 255, 255, 255), g::CourierNew, false, itemname.at(i).c_str());
+			g_pSurface->DrawT(ControlsX + 159, OffsetY + 16 + (i * 16), Color(205, 205, 205), g::Tahoma, false, itemname.at(i).c_str());
 		}
 	}
 
-	g_pSurface->DrawT(ControlsX + 159, OffsetY, Color(255, 255, 255, 255), g::CourierNew, false, itemname.at(*item).c_str());
+	g_pSurface->DrawT(ControlsX + 159, OffsetY, Color(205, 205, 205), g::Tahoma, false, itemname.at(*item).c_str());
 
 	OldOffsetY = OffsetY;
 
@@ -525,14 +572,12 @@ void Menu::MultiComboBox(std::string name, std::vector< std::string > itemname, 
 	if (nameSelected == name)
 		open = selectedOpened;
 
-	g_pSurface->DrawT(ControlsX + 6, OffsetY, Color(255, 255, 255, 255), g::CourierNew, false, name.c_str());
-	g_pSurface->FilledRect(ControlsX + 153, OffsetY, 140, 16,Color(0, 0, 0, 255));
-	g_pSurface->OutlinedRect(ControlsX + 153, OffsetY, 140, 16, Color(255, 0, 76, 255));
+	g_pSurface->DrawT(ControlsX + 6, OffsetY, Color(205, 205, 205), g::Tahoma, false, name.c_str());
+	g_pSurface->RoundedFilledRect(ControlsX + 153, OffsetY, 140, 16, 5, button_dark);
 
 	if (open)
 	{
-		g_pSurface->FilledRect(ControlsX + 153, OffsetY, 140, 17 + (itemname.size() * 16),Color(0, 0, 0, 255));
-		g_pSurface->OutlinedRect(ControlsX + 153, OffsetY, 140, 17 + (itemname.size() * 16), Color(255, 0, 76, 255));
+		g_pSurface->RoundedFilledRect(ControlsX + 153, OffsetY, 140, 17 + (itemname.size() * 16), 5, button_dark);
 
 		for (int i = 0; i < itemname.size(); i++)
 		{
@@ -546,17 +591,12 @@ void Menu::MultiComboBox(std::string name, std::vector< std::string > itemname, 
 			if (GetAsyncKeyState(VK_LBUTTON) && g_pSurface->MouseInRegion(ControlsX + 153, OffsetY + 16 + (i * 16), 140, 16) && !multiPressed)
 				multiPressed = true;
 
-			if (item[i]) {
-				g_pSurface->FilledRect(ControlsX + 154, OffsetY + 16 + (i * 16), 138, 16, Color(0, 0, 0, 255));
-				g_pSurface->OutlinedRect(ControlsX + 154, OffsetY + 16 + (i * 16), 138, 16, Color(255, 0, 76, 255));
-			}
-
-
+			if (item[i])
+				g_pSurface->RoundedFilledRect(ControlsX + 154, OffsetY + 16 + (i * 16), 138, 16, 5, button_light);
 			else
-			g_pSurface->FilledRect(ControlsX + 154, OffsetY + 16 + (i * 16), 138, 16,Color(0, 0, 0, 255));
-			g_pSurface->OutlinedRect(ControlsX + 154, OffsetY + 16 + (i * 16), 138, 16, Color(255, 0, 76, 255));
+				g_pSurface->RoundedFilledRect(ControlsX + 154, OffsetY + 16 + (i * 16), 138, 16, 5, button_light);
 
-			g_pSurface->DrawT(ControlsX + 159, OffsetY + 16 + (i * 16), Color(255, 255, 255, 255), g::CourierNew, false, itemname.at(i).c_str());
+			g_pSurface->DrawT(ControlsX + 159, OffsetY + 16 + (i * 16), Color(205, 205, 205), g::Tahoma, false, itemname.at(i).c_str());
 		}
 
 	}
@@ -566,8 +606,8 @@ void Menu::MultiComboBox(std::string name, std::vector< std::string > itemname, 
 	// man look at all these for loops i sure am retarded
 
 	for (int i = 0; i < itemname.size(); i++)
-	{ 
-		if (item[i]) 
+	{
+		if (item[i])
 		{
 			if (lastItem < i)
 				lastItem = i;
@@ -575,12 +615,12 @@ void Menu::MultiComboBox(std::string name, std::vector< std::string > itemname, 
 	}
 
 	for (int i = 0; i < itemname.size(); i++)
-	{ 
-		if (item[i]) 
+	{
+		if (item[i])
 		{
 			items = true;
-			RECT TextSize = g_pSurface->GetTextSizeRect(g::CourierNew, itemsSelected.c_str());
-			RECT TextSizeGonaAdd = g_pSurface->GetTextSizeRect(g::CourierNew, itemname.at(i).c_str());
+			RECT TextSize = g_pSurface->GetTextSizeRect(g::Tahoma, itemsSelected.c_str());
+			RECT TextSizeGonaAdd = g_pSurface->GetTextSizeRect(g::Tahoma, itemname.at(i).c_str());
 			if (TextSize.right + TextSizeGonaAdd.right < 130)
 				itemsSelected += itemname.at(i) + ((lastItem == i) ? "" : ", ");
 		}
@@ -589,7 +629,7 @@ void Menu::MultiComboBox(std::string name, std::vector< std::string > itemname, 
 	if (!items)
 		itemsSelected = "off";
 
-	g_pSurface->DrawT(ControlsX + 159, OffsetY, Color(255, 255, 255, 255), g::CourierNew, false, itemsSelected.c_str());
+	g_pSurface->DrawT(ControlsX + 159, OffsetY, Color(255, 255, 255, 255), g::Tahoma, false, itemsSelected.c_str());
 
 	OldOffsetY = OffsetY;
 
@@ -600,6 +640,77 @@ void Menu::MultiComboBox(std::string name, std::vector< std::string > itemname, 
 
 	PreviousControl = multi_box;
 }
+
+
+void Menu::Button(std::string text, Menu::ButtonCallback_t callback)
+{
+	if (GroupTabBottom <= OffsetY + 16)
+		return;
+
+	if (TabOffset - 1 != TabNum || TabOffset == 0)
+		return;
+
+	if (SubTabOffset != 0)
+		if (SubTabOffset - 1 != SubTabNum)
+			return;
+
+	bool pressed = false;
+	static bool clickRest;
+	static bool rest;
+
+	int height = 22;
+	int width = 10 + text.length() * 8;
+	Color menu_accentgrett(70, 70, 70);
+	Color menu_accentgrettt(205, 205, 205);
+
+	if (GetAsyncKeyState(VK_LBUTTON) && g_pSurface->MouseInRegion(ControlsX, OffsetY + 5, width, height) && !clickRest)
+	{
+		pressed = true;
+		clickRest = true;
+
+		g_pSurface->FilledRect(ControlsX, OffsetY + 5, width, height, menu_accentgrettt);
+		g_pSurface->Line(ControlsX, OffsetY + 5, ControlsX + width - 1, OffsetY + 5, button_dark); //TOP LONG
+		g_pSurface->Line(ControlsX, OffsetY + 6, ControlsX + width - 2, OffsetY + 6, button_dark); //TOP SHORT
+		g_pSurface->Line(ControlsX, OffsetY + 5, ControlsX, OffsetY + 5 + height, button_dark); //LEFT LONG
+		g_pSurface->Line(ControlsX + 1, OffsetY + 5, ControlsX + 1, OffsetY + 4 + height, button_dark); //LEFT SHORT
+		g_pSurface->Line(ControlsX - 1 + width, OffsetY + 7, ControlsX - 1 + width, OffsetY + 5 + height, button_light); //RIGHT SHORT
+		g_pSurface->Line(ControlsX + width, OffsetY + 6, ControlsX + width, OffsetY + 5 + height, button_light); //RIGHT LONG
+		g_pSurface->Line(ControlsX + 2, OffsetY + 5 + height, ControlsX + width, OffsetY + 5 + height, button_light); //BOTTOM SHORT
+		g_pSurface->Line(ControlsX + 3, OffsetY + 4 + height, ControlsX + width, OffsetY + 4 + height, button_light); //BOTTOM LONG
+	}
+	else if (!GetAsyncKeyState(VK_LBUTTON) && g_pSurface->MouseInRegion(ControlsX, OffsetY + 5, width, height))
+		clickRest = false;
+
+	if (pressed)
+	{
+		if (!rest)
+			callback();
+
+		rest = true;
+	}
+	else
+	{
+		rest = false;
+		g_pSurface->FilledRect(ControlsX, OffsetY + 5, width, height, menu_accentgrett);
+		g_pSurface->Line(ControlsX, OffsetY + 5, ControlsX + width - 1, OffsetY + 5, button_light); //TOP LONG
+		g_pSurface->Line(ControlsX, OffsetY + 6, ControlsX + width - 2, OffsetY + 6, button_light); //TOP SHORT
+		g_pSurface->Line(ControlsX, OffsetY + 5, ControlsX, OffsetY + 5 + height, button_light); //LEFT LONG
+		g_pSurface->Line(ControlsX + 1, OffsetY + 5, ControlsX + 1, OffsetY + 4 + height, button_light); //LEFT SHORT
+		g_pSurface->Line(ControlsX - 1 + width, OffsetY + 7, ControlsX - 1 + width, OffsetY + 5 + height, button_dark); //RIGHT SHORT
+		g_pSurface->Line(ControlsX + width, OffsetY + 6, ControlsX + width, OffsetY + 5 + height, button_dark); //RIGHT LONG
+		g_pSurface->Line(ControlsX + 2, OffsetY + 5 + height, ControlsX + width, OffsetY + 5 + height, button_dark); //BOTTOM SHORT
+		g_pSurface->Line(ControlsX + 3, OffsetY + 4 + height, ControlsX + width, OffsetY + 4 + height, button_dark); //BOTTOM LONG
+	}
+
+	g_pSurface->DrawT(ControlsX + 5, OffsetY + 10, Color(205, 205, 205), g::Tahoma, false, text.c_str());
+
+	OldOffsetY = OffsetY;
+
+	OffsetY += 29;
+
+	PreviousControl = button;
+}
+
 
 void Menu::ColorPicker(std::string name, ColorV2& item) // best coder in the universe
 {

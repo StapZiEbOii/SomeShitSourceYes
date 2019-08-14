@@ -110,7 +110,8 @@ private:
 		check_box,
 		slider,
 		combo_box,
-		multi_box
+		multi_box,
+		button
 	};
 
 	int ControlsX;
@@ -129,6 +130,7 @@ private:
 	int TabNum = 0;
 	int SubTabNum = 0;
 	int PreviousControl = -1;
+	typedef void(*ButtonCallback_t)(void);
 
 	void Button(std::string name);
 	void Tab(std::string name);
@@ -138,7 +140,7 @@ private:
 	void ComboBox(std::string name, std::vector< std::string > itemname, int* item);
 
 	void Button(std::string name, std::vector<std::string> itemname, int* item);
-	
+	void Button(std::string text, ButtonCallback_t callback);
 	void MultiComboBox(std::string name, std::vector< std::string > itemname, bool* item);
 	void ColorPicker(std::string name, ColorV2& item);
 };

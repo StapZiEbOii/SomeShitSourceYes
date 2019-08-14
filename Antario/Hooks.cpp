@@ -317,8 +317,6 @@ void __fastcall Hooks::PaintTraverse(PVOID pPanels, int edx, unsigned int vguiPa
 	static unsigned int panelID, panelHudID;
 
 
-	if (!g_pEngine->IsConnected() || !g_pEngine->IsInGame() || !g::pLocalEntity)
-		return;
 
 	if (!panelHudID)
 		if (!strcmp("HudZoom", g_pPanel->GetName(vguiPanel)))
@@ -371,10 +369,13 @@ void __fastcall Hooks::PaintTraverse(PVOID pPanels, int edx, unsigned int vguiPa
 		}
 	}
 
-
-	if (g_Menu.Config.NoFlash)
+	if (g_pEngine->IsConnected() || g_pEngine->IsInGame() || g::pLocalEntity)
 	{
-		g::pLocalEntity->SetFlashDuration(g_Menu.Config.FlashDuration / 255.f);
+
+		if (g_Menu.Config.NoFlash)
+		{
+			g::pLocalEntity->SetFlashDuration(g_Menu.Config.FlashDuration / 255.f);
+		}
 	}
 }
 
