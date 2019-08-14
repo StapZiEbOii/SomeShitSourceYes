@@ -23,40 +23,42 @@ void Menu::Render()
 	char* dt = ctime(&now);
 
 	// Logo
-
-	g_pSurface->DrawSetColor(0, 0, 0, 145);
-	g_pSurface->DrawFilledRect(w - 128 /* Width Left */, 27 /* Height Top */, 220 /* Right Width */ + w - 275 /* Negative Left (Right Side) */, 101 /* Bottom Hight */);
-
-
-	g_pSurface->DrawSetColor(0, 0, 0, 255);
-	g_pSurface->DrawOutlinedRect(w - 128 /* Width Left */, 27 /* Height Top */, 220 /* Right Width */ + w - 275 /* Negative Left (Right Side) */, 101 /* Bottom Hight */);
-
-	g_pSurface->DrawSetColor(255, 8, 127, 255);
-	g_pSurface->DrawFilledRect(w - 122 /* Width Left */, 36 /* Height Top */, 299 /* Right Width */ + w - 360 /* Negative Left (Right Side) */, 94 /* Bottom Hight */);
-
-	g_pSurface->DrawSetColor(0, 0, 0, 255);
-	g_pSurface->DrawFilledRect(w - 122 /* Width Left */, 39 /* Height Top */, 168 /* Right Width */ + w - 229 /* Negative Left (Right Side) */, 95 /* Bottom Hight */);
-
-	g_pSurface->DrawT(w - 100, 45, Color(255, 8, 127, 255), g::WatermarkFont, false, "C");
+	if (Config.WaterMark)
+	{
+		g_pSurface->DrawSetColor(0, 0, 0, 145);
+		g_pSurface->DrawFilledRect(w - 128 /* Width Left */, 27 /* Height Top */, 220 /* Right Width */ + w - 275 /* Negative Left (Right Side) */, 101 /* Bottom Hight */);
 
 
-	// Date
+		g_pSurface->DrawSetColor(0, 0, 0, 255);
+		g_pSurface->DrawOutlinedRect(w - 128 /* Width Left */, 27 /* Height Top */, 220 /* Right Width */ + w - 275 /* Negative Left (Right Side) */, 101 /* Bottom Hight */);
 
-	g_pSurface->DrawSetColor(0, 0, 0, 145);
-	g_pSurface->DrawFilledRect(w - 366 /* Width Left */, 27 /* Height Top */, 36 /* Right Width */ + w - 176 /* Negative Left (Right Side) */, 100 /* Bottom Hight */);
+		g_pSurface->DrawSetColor(255, 8, 127, 255);
+		g_pSurface->DrawFilledRect(w - 122 /* Width Left */, 36 /* Height Top */, 299 /* Right Width */ + w - 360 /* Negative Left (Right Side) */, 94 /* Bottom Hight */);
 
-	g_pSurface->DrawSetColor(0, 0, 0, 255);
-	g_pSurface->DrawOutlinedRect(w - 366 /* Width Left */, 27 /* Height Top */, 36 /* Right Width */ + w - 176 /* Negative Left (Right Side) */, 100 /* Bottom Hight */);
+		g_pSurface->DrawSetColor(0, 0, 0, 255);
+		g_pSurface->DrawFilledRect(w - 122 /* Width Left */, 39 /* Height Top */, 168 /* Right Width */ + w - 229 /* Negative Left (Right Side) */, 95 /* Bottom Hight */);
 
-	g_pSurface->DrawSetColor(255, 8, 127, 255);
-	g_pSurface->DrawFilledRect(w - 360 /* Width Left */, 36 /* Height Top */, 265 /* Right Width */ + w - 409 /* Negative Left (Right Side) */, 91 /* Bottom Hight */);
+		g_pSurface->DrawT(w - 100, 45, Color(255, 8, 127, 255), g::WatermarkFont, false, "C");
 
-	g_pSurface->DrawSetColor(0, 0, 0, 255);
-	g_pSurface->DrawFilledRect(w - 360 /* Width Left */, 39 /* Height Top */, 241 /* Right Width */ + w - 385 /* Negative Left (Right Side) */, 95 /* Bottom Hight */);
 
-	g_pSurface->DrawT(w - 262, 45, Color(255, 255, 255, 255), g::WatermarkDate, false, "DATE");
-	g_pSurface->DrawT(w - 326, 61, Color(255, 8, 127, 255), g::WatermarkDate, false, dt);
+		// Date
 
+		g_pSurface->DrawSetColor(0, 0, 0, 145);
+		g_pSurface->DrawFilledRect(w - 366 /* Width Left */, 27 /* Height Top */, 36 /* Right Width */ + w - 176 /* Negative Left (Right Side) */, 100 /* Bottom Hight */);
+
+		g_pSurface->DrawSetColor(0, 0, 0, 255);
+		g_pSurface->DrawOutlinedRect(w - 366 /* Width Left */, 27 /* Height Top */, 36 /* Right Width */ + w - 176 /* Negative Left (Right Side) */, 100 /* Bottom Hight */);
+
+		g_pSurface->DrawSetColor(255, 8, 127, 255);
+		g_pSurface->DrawFilledRect(w - 360 /* Width Left */, 36 /* Height Top */, 265 /* Right Width */ + w - 409 /* Negative Left (Right Side) */, 91 /* Bottom Hight */);
+
+		g_pSurface->DrawSetColor(0, 0, 0, 255);
+		g_pSurface->DrawFilledRect(w - 360 /* Width Left */, 39 /* Height Top */, 241 /* Right Width */ + w - 385 /* Negative Left (Right Side) */, 95 /* Bottom Hight */);
+
+		g_pSurface->DrawT(w - 262, 45, Color(255, 255, 255, 255), g::WatermarkDate, false, "DATE");
+		g_pSurface->DrawT(w - 326, 61, Color(255, 8, 127, 255), g::WatermarkDate, false, dt);
+
+	}
 	static bool Pressed = false;
 
 	if (!Pressed && GetAsyncKeyState(VK_INSERT))
@@ -208,6 +210,7 @@ void Menu::Render()
 			ColorPicker("Box Color", Config.BoxColor);
 			CheckBox("Health", &Config.HealthBar);
 
+
 		}
 
 		Tab("C");
@@ -244,6 +247,10 @@ void Menu::Render()
 			CheckBox("Animated Clantag", &Config.ClanTag);
 			CheckBox("Fake Walk", &Config.SlowWalk);
 			if (Config.SlowWalk) Slider(100, "Speed", &Config.WalkSpeed);
+			CheckBox("No Smoke", &Config.NoSmoke);
+			CheckBox("No Flash", &Config.NoFlash);
+			if (Config.NoFlash)
+				Slider(180, "Flash Duration", &Config.FlashDuration);
 			g_pSurface->DrawT(Pos.x + 307, Pos.y + 289, Color(255, 255, 255, 255), g::CourierNew, false, "Save Config");
 			g_pSurface->DrawT(Pos.x + 307, Pos.y + 315, Color(255, 255, 255, 255), g::CourierNew, false, "Load Config");
 		}

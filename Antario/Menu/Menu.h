@@ -93,6 +93,10 @@ public:
 
 		bool LegitBacktrack;
 		bool Ak47meme;
+		bool NoSmoke;
+		bool NoFlash;
+		int FlashDuration;
+		bool WaterMark;
 	}Config;
 
 private:

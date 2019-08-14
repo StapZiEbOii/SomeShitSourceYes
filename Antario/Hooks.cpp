@@ -187,6 +187,27 @@ void __fastcall Hooks::SceneEnd(void *ecx, void *edx)
 	static IMaterial* Material = nullptr;
 	static bool ResetMaterial = false;
 
+
+	static auto nosmokeshit = Utils::FindPattern("client_panorama.dll", (PBYTE)"\x55\x8B\xEC\x83\xEC\x08\x8B\x15\x00\x00\x00\x00\x0F\x57\xC0", "xxxxxxxx????xxx");
+
+	if (g_Menu.Config.NoSmoke) {
+		std::vector<const char*> vistasmoke_wireframe =
+		{
+			"particle/vistasmokev1/vistasmokev1_smokegrenade",
+		};
+
+		for (auto mat_s : vistasmoke_wireframe)
+		{
+			IMaterial* mat = g_pMaterialSys->FindMaterial(mat_s, "Other textures");
+			mat->IncrementReferenceCount();
+			mat->SetMaterialVarFlag(MATERIAL_VAR_WIREFRAME, true);
+		}
+
+		static auto smokecout = *(DWORD*)(nosmokeshit + 0x8);
+		*(int*)(smokecout) = 0;
+	}
+
+
 	if (!g::pLocalEntity || !g_pEngine->IsInGame() || !g_pEngine->IsConnected() || !g_Menu.Config.Chams)
 	{
 		Material = nullptr;
@@ -295,6 +316,10 @@ void __fastcall Hooks::PaintTraverse(PVOID pPanels, int edx, unsigned int vguiPa
 	static auto oPaintTraverse = g_Hooks.pPanelHook->GetOriginal<PaintTraverse_t>(vtable_indexes::paint);
 	static unsigned int panelID, panelHudID;
 
+
+	if (!g_pEngine->IsConnected() || !g_pEngine->IsInGame() || !g::pLocalEntity)
+		return;
+
 	if (!panelHudID)
 		if (!strcmp("HudZoom", g_pPanel->GetName(vguiPanel)))
 		{
@@ -344,6 +369,12 @@ void __fastcall Hooks::PaintTraverse(PVOID pPanels, int edx, unsigned int vguiPa
 				}
 			}
 		}
+	}
+
+
+	if (g_Menu.Config.NoFlash)
+	{
+		g::pLocalEntity->SetFlashDuration(g_Menu.Config.FlashDuration / 255.f);
 	}
 }
 

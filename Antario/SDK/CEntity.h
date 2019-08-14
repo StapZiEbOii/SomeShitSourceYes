@@ -333,6 +333,11 @@ public:
 	{
 		return *reinterpret_cast<Vector*>(uintptr_t(this) + uintptr_t(0x302C));
 	}
+	void SetFlashDuration(float fDuration)
+	{
+		static int pFlashDuration = g_pNetvars->GetOffset("DT_CSPlayer", "m_flFlashDuration");
+		*reinterpret_cast<int*>(uintptr_t(this) + pFlashDuration) = fDuration;
+	}
 
 	Vector GetViewPunchAngle()
 	{
