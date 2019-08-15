@@ -47,6 +47,7 @@ public:
     static void Init();
     static void Restore();
 	static void HookPlayers();
+	static void SetClanTag(const char*, const char*);
 
     /*---------------------------------------------*/
     /*-------------Hooked functions----------------*/

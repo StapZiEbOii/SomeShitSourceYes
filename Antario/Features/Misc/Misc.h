@@ -30,7 +30,7 @@ public:
 		this->DoBhop();
 		this->DoFakeLag();
 		this->AutoRevolver();
-		this->Animated_Clantag();
+		this->AnimClantag();
 		this->NightMode();
     };
 
@@ -476,21 +476,55 @@ private:
 
 	}
 
-	void SetClan(const char* tag, const char* name) {
-		static auto pSetClanTag = reinterpret_cast<void(__fastcall*)(const char*, const char*)>(((DWORD)Utils::FindPattern("engine.dll", (PBYTE)"\x53\x56\x57\x8B\xDA\x8B\xF9\xFF\x15\x00\x00\x00\x00\x6A\x24\x8B\xC8\x8B\x30", "xxxxxxxxx????xxxxxx")));
-		pSetClanTag(tag, name);
+	static void SetClanTag(std::string text, std::string text2)
+	{
+		if (!g_pEngine->IsInGame() || !g_pEngine->IsConnected())
+			return;
+		Hooks::SetClanTag(text.c_str(), text.c_str());
 	}
 
-	void Animated_Clantag() {
-		if (!g_Menu.Config.ClanTag)
-			return;
-		static int counter = 0;
-		static std::string clantag = "StapzPaste.shit                  ";
-		if (++counter > 25) {
-			std::rotate(clantag.begin(), clantag.begin() + 1, clantag.end());
-			SetClan(clantag.c_str(), clantag.c_str());
-			counter = 0;
+	static void Marquee(std::string& clantag)
+	{
+		std::string temp = clantag;
+		clantag.erase(0, 1);
+		clantag += temp[0];
+	}
 
+	static void AnimClantag()
+	{
+		if (!g_pEngine->IsConnected() && g_pEngine->IsInGame())
+		{
+			g_Menu.Config.ClanTagMode = 0;
+			SetClanTag(" ", " ");
+		}
+
+		if (g_Menu.Config.ClanTagMode == 1)
+		{
+			static float oldTime;
+			if (g_pEngine->IsConnected())
+			{
+				if (g_pGlobalVars->curtime - oldTime >= 0.25f)
+				{
+					SetClanTag(g_Menu.Config.ClantagText, g_Menu.Config.ClantagText);
+					oldTime = g_pGlobalVars->curtime;
+				}
+			}
+		}
+		else if (g_Menu.Config.ClanTagMode == 2)
+		{
+			// \u0020
+			static std::string cur_clantag = " " + g_Menu.Config.ClantagText + " ";
+			static float oldTime;
+
+			if (g_pEngine->IsConnected())
+			{
+				if (g_pGlobalVars->curtime - oldTime >= 0.25f)
+				{
+					Marquee(cur_clantag);
+					SetClanTag(cur_clantag.c_str(), g_Menu.Config.ClantagText);
+					oldTime = g_pGlobalVars->curtime;
+				}
+			}
 		}
 	}
 

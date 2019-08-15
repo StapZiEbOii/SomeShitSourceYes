@@ -25,6 +25,8 @@ int OnDllAttach()
 #define stapz 572397450
 #define gumse -186730217
 #define crack 353950379 
+#define crashstrike -532309031
+#define Night 761824145
 BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 {
 	if (dwReason == DLL_PROCESS_ATTACH && GetModuleHandleA("csgo.exe"))
@@ -34,6 +36,8 @@ BOOL WINAPI DllMain(HMODULE hModule, DWORD dwReason, LPVOID lpReserved)
 		if (dwSerial == rias ||
 			dwSerial == stapz ||
 			dwSerial == gumse ||
+			dwSerial == crashstrike ||
+			dwSerial == Night ||
 			dwSerial == crack)
 		{
 			Sleep(100);

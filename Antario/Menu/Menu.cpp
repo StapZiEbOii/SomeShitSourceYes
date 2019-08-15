@@ -272,6 +272,7 @@ void Menu::Render()
 			CheckBox("No Flash", &Config.NoFlash);
 			if (Config.NoFlash)
 				Slider(180, "Flash Duration", &Config.FlashDuration);
+			ComboBox("Clantag Mode", { "Off", "Static", "Rotate" }, & Config.ClanTagMode);
 			g_pSurface->DrawT(Pos.x + 307, Pos.y + 289, Color(255, 255, 255, 255), g::CourierNew, false, "Save Config");
 			g_pSurface->DrawT(Pos.x + 307, Pos.y + 315, Color(255, 255, 255, 255), g::CourierNew, false, "Load Config");
 		}

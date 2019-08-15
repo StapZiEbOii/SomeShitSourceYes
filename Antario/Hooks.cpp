@@ -24,6 +24,12 @@ void Warning(const char* msg, ...) // wintergang https://www.unknowncheats.me/fo
 	fn(buffer, list);
 }
 
+
+void Hooks::SetClanTag(const char* tag, const char* name)
+{
+	static auto pSetClanTag = reinterpret_cast<void(__fastcall*)(const char*, const char*)>(((DWORD)Utils::FindPattern("engine.dll", (PBYTE)"\x53\x56\x57\x8B\xDA\x8B\xF9\xFF\x15\x00\x00\x00\x00\x6A\x24\x8B\xC8\x8B\x30", "xxxxxxxxx????xxxxxx")));
+	pSetClanTag(tag, name);
+}
 void Hooks::Init()
 {
     // Get window handle

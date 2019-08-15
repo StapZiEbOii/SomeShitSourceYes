@@ -97,6 +97,8 @@ public:
 		bool NoFlash;
 		int FlashDuration;
 		bool WaterMark;
+		int ClanTagMode = 0;
+		std::string ClantagText = "webaim.you";
 	}Config;
 
 private:
